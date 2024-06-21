@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Browser</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        video, img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .buttons {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .buttons button, .buttons a {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="media-container">
+        <div id="media-content">
+            {% if is_video %}
+            <video id="media-player" controls autoplay muted>
+                <source src="/media/{{ path }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {% elif is_image %}
+            <img id="media-player" src="/media/{{ path }}" alt="{{ name }}">
+            {% else %}
+            <p>Unsupported media type</p>
+            {% endif %}
+        </div>
+        <div class="buttons">
+            <button onclick="likeMedia({{ media_id }})">Like <span id="like-count">{{ likes }}</span></button>
+            <button onclick="deleteMedia({{ media_id }})">Delete</button>
+            <a href="/download/{{ media_id }}">Download</a>
+        </div>
+    </div>
+    <script>
+        function likeMedia(media_id) {
+            fetch(`/like/${media_id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('like-count').innerText = data.likes;
+                    }
+                });
+        }
+
+        function deleteMedia(media_id) {
+            fetch(`/delete/${media_id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                });
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                window.location.reload(); // For simplicity, reload to get a new random media
+            }
+        });
+
+        let startY;
+        document.addEventListener('touchstart', function(event) {
+            startY = event.touches[0].pageY;
+        });
+
+        document.addEventListener('touchmove', function(event) {
+            if (event.touches.length > 1) {
+                return;
+            }
+            let endY = event.touches[0].pageY;
+            let deltaY = endY - startY;
+            if (deltaY > 50) {
+                window.location.reload(); // Swipe down
+            } else if (deltaY < -50) {
+                window.location.reload(); // Swipe up
+            }
+        });
+    </script>
+</body>
+</html>
