@@ -14,7 +14,13 @@
 
 > 安装依赖后运行main.py
 >
-> 
+> 直接使用docker：
+>
+> docker pull realwang/short_video
+>
+> docker run -d -p 3000:3000 -v /path/to/your/video:/app/video realwang/short_video
+
+
 
 
 
