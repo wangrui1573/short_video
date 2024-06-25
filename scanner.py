@@ -4,12 +4,15 @@ import time
 import sqlite3
 from database import init_db, add_media
 
+#定义扫描目录函数
 def scan_directory(directory='video'):
     init_db()
     print(f"扫描目录: {directory}")
     for root, dirs, files in os.walk(directory):
         for file in files:
+            #只扫描mp4、jpg、png、gif文件
             if file.endswith(('.mp4', '.jpg', '.png', '.gif')):
+                
                 path = os.path.join(root, file)
                 print(f"发现文件: {file} 路径: {path}")
                 try:
@@ -22,6 +25,7 @@ def scan_directory(directory='video'):
                 except Exception as e:
                     print(f"由于异常无法插入 {file} 到数据库: {str(e)}")
 
+#定义增量扫描函数
 def incremental_scan(directory='video'):
     scanned_files = set()
     conn = sqlite3.connect('media.db')

@@ -1,7 +1,9 @@
 # database.py
+# 用于与数据库进行交互
 
 import sqlite3
 
+# 初始化数据库
 def init_db():
     conn = sqlite3.connect('media.db')
     c = conn.cursor()
@@ -10,6 +12,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+# 添加媒体到数据库
 def add_media(name, path):
     try:
         conn = sqlite3.connect('media.db')
@@ -25,6 +28,7 @@ def add_media(name, path):
         print(f"Error inserting {name} into database: {str(e)}")
         return False
 
+# 更新媒体的访问次数
 def update_views(media_id):
     conn = sqlite3.connect('media.db')
     c = conn.cursor()
@@ -32,6 +36,7 @@ def update_views(media_id):
     conn.commit()
     conn.close()
 
+# 更新媒体的点赞次数
 def update_likes(media_id):
     conn = sqlite3.connect('media.db')
     c = conn.cursor()
@@ -39,6 +44,7 @@ def update_likes(media_id):
     conn.commit()
     conn.close()
 
+# 删除媒体
 def delete_media(media_id):
     conn = sqlite3.connect('media.db')
     c = conn.cursor()
@@ -46,6 +52,7 @@ def delete_media(media_id):
     conn.commit()
     conn.close()
 
+# 获取随机媒体
 def get_random_media():
     conn = sqlite3.connect('media.db')
     c = conn.cursor()
